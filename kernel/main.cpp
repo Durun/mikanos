@@ -110,6 +110,8 @@ extern "C" void KernelMain(const FrameBufferConfig& frame_buffer_config) {
     *pixel_writer, kDesktopFGColor, kDesktopBGColor
   };
   printk("Welcome to MikanOS!\n");
+  printk("--Test carriage return--\n");
+  printk("___\r ++\r  ^\n");
   // #@@range_end(draw_desktop)
 
   // #@@range_begin(draw_mouse_cursor)

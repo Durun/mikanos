@@ -19,6 +19,8 @@ void Console::PutString(const char* s) {
   while (*s) {
     if (*s == '\n') {
       Newline();
+    } else if (*s == '\r') {
+      CarriageReturn();
     } else if (cursor_column_ < kColumns - 1) {
       WriteAscii(writer_, 8 * cursor_column_, 16 * cursor_row_, *s, fg_color_);
       buffer_[cursor_row_][cursor_column_] = *s;
@@ -44,4 +46,8 @@ void Console::Newline() {
     }
     memset(buffer_[kRows - 1], 0, kColumns + 1);
   }
+}
+
+void Console::CarriageReturn() {
+  cursor_column_ = 0;
 }
