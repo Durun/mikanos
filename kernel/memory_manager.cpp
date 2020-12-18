@@ -61,7 +61,8 @@ bool BitmapMemoryManager::GetBit(FrameID frame) const {
   auto line_index = frame.ID() / kBitsPerMapLine;
   auto bit_index = frame.ID() % kBitsPerMapLine;
 
-  return (alloc_map_[line_index] & (static_cast<MapLineType>(1) << bit_index)) != 0;
+  auto mask = static_cast<MapLineType>(1) << bit_index;
+  return (alloc_map_[line_index] & mask) != 0;
 }
 
 void BitmapMemoryManager::SetBit(FrameID frame, bool allocated) {
