@@ -64,17 +64,20 @@ bool BitmapMemoryManager::GetBit(FrameID frame) const {
   auto line_index = frame.ID() / kBitsPerMapLine;
   auto bit_index = frame.ID() % kBitsPerMapLine;
 
-  return (alloc_map_[line_index] & (static_cast<MapLineType>(1) << bit_index)) != 0;
+  auto mask = static_cast<MapLineType>(1) << bit_index;
+  return (alloc_map_[line_index] & mask) != 0;
 }
 
 void BitmapMemoryManager::SetBit(FrameID frame, bool allocated) {
   auto line_index = frame.ID() / kBitsPerMapLine;
   auto bit_index = frame.ID() % kBitsPerMapLine;
 
+  auto selected_bits = static_cast<MapLineType>(1) << bit_index;
+
   if (allocated) {
-    alloc_map_[line_index] |= (static_cast<MapLineType>(1) << bit_index);
+      alloc_map_[line_index] |= selected_bits;
   } else {
-    alloc_map_[line_index] &= ~(static_cast<MapLineType>(1) << bit_index);
+      alloc_map_[line_index] &= ~selected_bits;
   }
 }
 
