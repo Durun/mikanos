@@ -324,7 +324,7 @@ EFI_STATUS EFIAPI UefiMain(
 
   UINT8* frame_buffer = (UINT8*)gop->Mode->FrameBufferBase;
   for (UINTN i = 0; i < gop->Mode->FrameBufferSize; ++i) {
-    frame_buffer[i] = 255;
+    frame_buffer[i] = 128;
   }
 
   EFI_FILE_PROTOCOL* kernel_file;
