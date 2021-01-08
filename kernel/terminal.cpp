@@ -151,7 +151,7 @@ void Terminal::ExecuteLine() {
       }
 
       if (ext[0]) {
-        sprintf(s, "%s.%s\n", base, ext);
+        sprintf(s, "%s [%s]\n", base, ext);
       } else {
         sprintf(s, "%s\n", base);
       }
