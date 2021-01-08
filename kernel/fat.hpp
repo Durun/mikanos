@@ -70,6 +70,18 @@ struct DirectoryEntry {
   }
 } __attribute__((packed));
 
+struct LFNDirectoryEntry {
+  // 解説は http://elm-chan.org/docs/fat.html#lfn より
+  uint8_t LDIR_Ord;           // このエントリがLFNエントリ(1個のLFNを構成するエントリ群)のどの部分かを示すシーケンス番号(1～20)。1がLFNの先頭部を意味する。LAST_LONG_ENTRYフラグ(0x40)が立っているときは、LFNエントリの開始であることを示す。
+  char16_t LDIR_Name1[5];     // 名前。1文字目～5文字目。Unicode(UTF-16LE)で格納される。
+  uint8_t LDIR_Attr;          // LFNアトリビュート。このエントリがLFNエントリの一部であることを示すため、ATTR_LONG_NAMEでなければならない。
+  uint8_t LDIR_Type;          // LFNのタイプ。常に0でなければならず、0以外は予約。
+  uint8_t LDIR_Chksum;        // このLFNエントリと結びつけられているSFNエントリのチェックサム。
+  char16_t LDIR_Name2[6];     // 名前。6文字目～11文字目。
+  uint8_t LDIR_FstClusLO[2];  // 古いディスクユーティリティによる危険の可能性を避けるため、0がセットされる。
+  char16_t LDIR_Name3[2];     // 名前。12文字目～13文字目。
+} __attribute__((packed));
+
 extern BPB* boot_volume_image;
 void Initialize(void* volume_image);
 
@@ -101,4 +113,12 @@ T* GetSectorByCluster(unsigned long cluster) {
  */
 void ReadName(const DirectoryEntry& entry, char* base, char* ext);
 
+/** @brief ディレクトリエントリの長名を取得する。長名が無効であればヌル文字で始まる文字列を返す。
+ *
+ * @param entries
+ * @param i
+ * @param name  長名（size14以上の配列）
+ */
+void ReadLongName(const DirectoryEntry entries[], int i, char name[]);
+void String16toString8(char16_t from[], char to[]);
 } // namespace fat

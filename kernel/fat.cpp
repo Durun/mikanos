@@ -38,5 +38,36 @@ void ReadName(const DirectoryEntry& entry, char* base, char* ext) {
   }
 }
 // #@@range_end(read_name)
+void ReadLongName(const DirectoryEntry entries[], int i, char name[]) {
+  name[0] = 0;
+  const uint8_t LAST_LONG_ENTRY = 0x40;
+  if (i <= 0) return;
+  if (entries[i - 1].attr != Attribute::kLongName) return;
 
-} // namespace fat
+  LFNDirectoryEntry* entry = (LFNDirectoryEntry*) &entries[i - 1];
+  if (entry->LDIR_Type != 0) return;
+  if (entry->LDIR_FstClusLO[0] != 0) return;
+  if (entry->LDIR_FstClusLO[1] != 0) return;
+
+  uint8_t ord = entry->LDIR_Ord;
+  char16_t longName[14];
+  if ((ord == 0x01) || (ord & LAST_LONG_ENTRY)) {
+    for (int i = 0; i < 5; i++) longName[i] = entry->LDIR_Name1[i];
+    for (int i = 0; i < 6; i++) longName[5 + i] = entry->LDIR_Name2[i];
+    for (int i = 0; i < 2; i++) longName[11 + i] = entry->LDIR_Name3[i];
+  }
+  longName[13] = 0;
+  // return
+  String16toString8(longName, name);
+}
+void String16toString8(char16_t from[], char to[]) {
+  int i = 0;
+  char *c;
+  do {
+    c = (char*)(&(from[i]));
+    to[i] = *c;
+    i++;
+  } while (*c != 0);
+}
+
+}  // namespace fat

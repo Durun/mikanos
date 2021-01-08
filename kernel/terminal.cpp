@@ -139,19 +139,21 @@ void Terminal::ExecuteLine() {
        fat::boot_volume_image->bytes_per_sector / sizeof(fat::DirectoryEntry)
        * fat::boot_volume_image->sectors_per_cluster;
     char base[9], ext[4];
+    char longName[14];
     char s[64];
     for (int i = 0; i < entries_per_cluster; ++i) {
       ReadName(root_dir_entries[i], base, ext);
+      ReadLongName(root_dir_entries, i, longName);
       if (base[0] == 0x00) {
-        break;
+          break;
       } else if (static_cast<uint8_t>(base[0]) == 0xe5) {
-        continue;
+          continue;
       } else if (root_dir_entries[i].attr == fat::Attribute::kLongName) {
-        continue;
+          continue;
       }
 
       if (ext[0]) {
-        sprintf(s, "%s [%s]\n", base, ext);
+        sprintf(s, "%s [%s] %s\n", base, ext, longName);
       } else {
         sprintf(s, "%s\n", base);
       }
